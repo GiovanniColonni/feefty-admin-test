@@ -3,5 +3,9 @@
     "paths": {
       "@/*": ["./src/*"]
     }
-  }
+  },
+  "include": [
+    "./src/**/*",
+    "/home/colo/Desktop/feefty-admin-test/src/app/components/AddButton.js"
+  ]
 }

@@ -8,6 +8,9 @@ module.exports = {
   theme: {
     extend: {
       colors: {
+        blue:{
+          primary:"blue",
+        },
         gray: {
           50: "#F7F8FA",
           200: "#BCCADC80",
@@ -19,6 +22,9 @@ module.exports = {
       },
       screens: {
         xs: "480px",
+      },
+      fontFamily: {
+        sans: ['system-ui', '-apple-system', 'BlinkMacSystemFont', 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', 'Fira Sans', 'Droid Sans', 'Helvetica Neue', 'sans-serif'],
       },
     },
   },
