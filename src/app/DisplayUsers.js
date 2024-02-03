@@ -10,6 +10,6 @@ export async function getServerSideProps() {
 
 export async function DisplayUsers({ users }) {
   return (
-    <div>User list</div>
+    <div div className="bg-white drop-shadow-lg py-6 px-4 xs:rounded-xl">User list</div>
   );
 }

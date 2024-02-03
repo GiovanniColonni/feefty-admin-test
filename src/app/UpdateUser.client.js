@@ -13,14 +13,14 @@ const userSchema = z.object({
   role: z.string().min(1, { message: "Role is required" }),
 });
 
-function AddUser() {
-
+function AddUser({ defaultValues }) {
   const {
     register,
     handleSubmit,
     formState: { errors },
   } = useForm({
     resolver: zodResolver(userSchema),
+    defaultValues: defaultValues
   });
 
   function onSubmit(data) {
@@ -32,7 +32,7 @@ function AddUser() {
       {/* Central part: Form */}
       <div className="flex-grow">
         <div className="bg-white drop-shadow-lg py-6 px-4">
-          <UserForm onSubmit={handleSubmit(onSubmit)} register={register} error={errors} />
+          <UserForm onSubmit={handleSubmit(onSubmit)} register={register} />
         </div>
         <div className="px-4 py-3 sm:px-6 flex justify-end">
           <button
