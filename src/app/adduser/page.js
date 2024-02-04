@@ -1,5 +1,5 @@
-import { BackButton } from "@/ui/HeaderBack/BackButton"
-import UserForm from "./UserForm/UserForm"
+import { BackButton } from "@/app/ui/HeaderBack/BackButton"
+import UserForm from "../ui/UserForm"
 
 export default async function AddUser(){
     return(

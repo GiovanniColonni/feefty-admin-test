@@ -1,16 +1,13 @@
-import { getUsers } from './actions';
+"use server"
+import { ModifyButton } from '@/app/ui/Home/ModifyButton';
+import { getUsers,changeUserState } from './actions';
 import './globals.css'
-import { AddButton } from '@/ui/HeaderHome/AddButton';
+import { AddButton } from '@/app/ui/HeaderHome/AddButton';
 
 
 export default async function Home() {
-    // Qui puoi gia' leggere i dati dal server chiamando quello che c'e' scritto dentro data
-    // pero' devi fare readDdata() e non readDataPrisma() ! cosi' sarebbe ortogonale 
-    // Non c'e' una Business Logic vera e propria che si puo' separare poi dalla lettura dai dati
-    // ma in questo punto puoi comunque fare read, e fare un adapter che passi aread in case a un setting
-    // in modo che sia l'oggetto che gli passi a dare la specifica logica (dependency injection)
-    // queste vanno in actions.js  
     const users = await getUsers();
+    
     console.log(users);
     const noUsers = users.length === 0;
     return (
@@ -32,16 +29,19 @@ export default async function Home() {
                         </>
                     ) : (
                         <div className='flex flex-col items-center space-y-4'>
-                            {users.map((user,_idx) => {
-                                return(<div key={_idx} className="flex  items-center">
-                                    <button className="bg-blue-500 text-white px-2 py-1 rounded-lg">
-                                        Button1
-                                    </button>
+                            {users.map((user, _idx) => {
+                                return (<div key={_idx} className="flex  items-center">
+                                    <form action={changeUserState}> {/** action changeUserState */}
+                                        <input type="hidden" name="id" value={user.id} />
+                                        <button className="bg-blue-500 text-white px-2 py-1 rounded-lg">
+                                            Button1
+                                        </button>
+                                    </form>
                                     <div className="flex flex-col">
                                         <div>{user.firstName}</div>
                                         <div>{user.email}</div>
                                     </div>
-                                    <button>M</button>
+                                    <ModifyButton id={user.id}/>
                                 </div>)
                             })}
                         </div>
