@@ -8,7 +8,7 @@ export const UserModel = z.object({
   firstName: z.string().min(1),
   lastName: z.string().min(1),
   status: Status.default("active"),
-  email: z.string().min(1),
+  email: z.string().email(),
   roleId: z.string(),
 });
 

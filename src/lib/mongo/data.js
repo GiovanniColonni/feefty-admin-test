@@ -1,3 +1,0 @@
-/**
- * Qui APi fetch cose 
- */

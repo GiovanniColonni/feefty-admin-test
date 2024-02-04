@@ -133,9 +133,9 @@ async function createUsers() {
 
 async function main() {
   const roles = await createRoles();
-  console.log(`${roles.length} roles created`);
+  console.log(`[PRISMA] ${roles.length} roles created`);
   const users = await createUsers();
-  console.log(`${users.length} users created`);
+  console.log(`[PRISMA] ${users.length} users created`);
 }
 
 main()

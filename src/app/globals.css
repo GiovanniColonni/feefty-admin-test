@@ -2,6 +2,15 @@
 @tailwind components;
 @tailwind utilities;
 
+#userlistdiv::-webkit-scrollbar {
+  display: none;
+}
+
+#userlistdiv {
+  -ms-overflow-style: none;  /* IE and Edge */
+  scrollbar-width: none;
+}
+
 :root {
   --foreground-rgb: 0, 0, 0;
   --background-start-rgb: 214, 219, 220;
@@ -13,6 +22,10 @@
     --foreground-rgb: 14, 24, 35;
     --background-rgb: 247, 248, 250;
   }
+}
+
+*, ::before, ::after {
+  box-sizing: border-box;
 }
 
 body {
