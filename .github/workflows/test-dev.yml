@@ -1,0 +1,25 @@
+# .github/workflows/test-dev.yml
+# Usefull to have in the develop branch
+name: Feefty Admin run tests and linter
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  build-and-test:
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v4
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '18'
+    - name: Install Dependencies
+      run: yarn install
+    - name: Run Tests
+      run: yarn run test
+    - name: Run Linter
+      run: yarn run lint
+    

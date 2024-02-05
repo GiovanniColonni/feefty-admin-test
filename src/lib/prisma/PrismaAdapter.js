@@ -45,12 +45,29 @@ async function changeUserState(id) {
     }, id)
 }
 
+async function getRoles() {
+    return await procedureDB(async () => {
+        const res = await prisma.role.findMany()
+        const map = res.map((role) => {
+            return { value: role.id, label: role.label }
+        })
+        return map
+    })
+}
 
-export default {
+async function getAdapterName() {
+    return "prisma"
+}
+
+const PrismaAdapter = {
     getUsers,
     addUser,
     getUserById,
     updateUser,
     deleteUserById,
-    changeUserState
+    changeUserState,
+    getRoles,
+    getAdapterName
 }
+
+export default PrismaAdapter;

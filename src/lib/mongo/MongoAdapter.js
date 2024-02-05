@@ -21,7 +21,7 @@ function denormalizeUser(user) {
     return user
 }
 
-async function connectToMongoDB() {
+async function connectToMongoDB(collectionName = 'users') {
     await client.connect();
     return client.db(dbName).collection(collectionName);
 }
@@ -56,8 +56,8 @@ async function getUserById(userId) {
     try {
         const collection = await connectToMongoDB();
         const user = await collection.findOne({ userId: userId });
-        if(user === null){
-            return 
+        if (user === null) {
+            return
         }
         return normalizeUser(user)
     } catch (error) {
@@ -95,12 +95,37 @@ async function deleteUserById(userId) {
 }
 
 // Function to change user state
-async function changeUserState(userId, newState) {
+async function changeUserState(userId) {
     try {
+        const userState = (await getUserById(userId)).status;
+        let newState = "active";
+        if (userState === "active") {
+            newState = "inactive";
+        }
         return await updateUser(userId, { status: newState });
     } catch (error) {
         throw new Error('Failed to change user state');
     }
+}
+
+async function getRoles() {
+    try {
+        const collection = await connectToMongoDB("roles");
+        const roles = await collection.find().toArray();
+
+        const rolemap = roles.map(role => {
+            return { value: String(role._id), label: role.label }
+        })
+
+        console.log("rolemap", rolemap)
+        return rolemap
+    } catch (error) {
+        throw new Error('Failed to get roles');
+    }
+}
+
+async function getAdapterName() {
+    return "mongodb"
 }
 
 module.exports = {
@@ -109,5 +134,7 @@ module.exports = {
     getUserById,
     updateUser,
     deleteUserById,
-    changeUserState
+    changeUserState,
+    getRoles,
+    getAdapterName
 };

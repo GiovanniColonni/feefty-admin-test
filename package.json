@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "updateSnapshot": "jest --updateSnapshot"
+    "updateSnapshot": "jest --updateSnapshot",
+    "test": "jest ./__tests__/*.test.js"
   },
   "prisma": {
     "seed": "node prisma/seed.js"
@@ -23,7 +24,7 @@
     "mongodb": "^6.3.0",
     "mongoose": "^8.1.1",
     "next": "^14.0.4",
-    "next-router-mock": "^0.9.11",
+    "next-router-mock": "^0.9.12",
     "postcss": "8.4.24",
     "prisma": "^5.9.1",
     "react": "18.2.0",

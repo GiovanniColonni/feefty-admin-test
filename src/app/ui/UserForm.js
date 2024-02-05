@@ -5,11 +5,13 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { UserModel } from "../adduser/UserForm/model";
 
-import TextInput from "@/app/ui/TextInput";
+import TextInput, { TextInputSelect } from "@/app/ui/TextInput";
 import DeleteConfirm from "@/app/ui/DeleteConfirm";
-import { GoodToast } from "./Toast";
+import { Toast } from "./Toast";
+import FormTitle from "./FormTitle";
+import { useRouter } from "next/navigation";
 
-export default function UserForm({ id = null, defaultValues = {}, deleteFlag = false }) {
+export default function UserForm({ id = null, defaultValues = {}, deleteFlag = false, roles }) {
 
     const {
         register,
@@ -22,7 +24,7 @@ export default function UserForm({ id = null, defaultValues = {}, deleteFlag = f
     });
 
     const isEdit = Object.keys(defaultValues).length > 0 && id !== null
-
+    const router = useRouter()
     const [actionDone, setActionDone] = useState(false)
     const [actionError, setActionError] = useState(false)
 
@@ -39,17 +41,13 @@ export default function UserForm({ id = null, defaultValues = {}, deleteFlag = f
     }
 
     const onSubmit = async (data) => {
-        // TODO refactoring
-        console.log("good data", data);
-
+        
         if (isEdit) {
             const done = await updateUser(id, data);
             if (done) {
-                console.log("User updated")
                 setActionDone(true)
                 handleToastDone()
             } else {
-                console.log("User not updated")
                 setActionError(true)
                 handleToastError()
             }
@@ -57,12 +55,10 @@ export default function UserForm({ id = null, defaultValues = {}, deleteFlag = f
         } else {
             const done = await addUser(data);
             if (done) {
-                console.log("User saved")
                 setActionDone(true)
                 handleToastDone()
                 reset()
             } else {
-                console.log("User not saved")
                 setActionError(true)
                 handleToastError()
             }
@@ -71,18 +67,13 @@ export default function UserForm({ id = null, defaultValues = {}, deleteFlag = f
     }
 
     const onErrorSubmit = (err) => {
-        console.log("err", err);
-        console.log("err keys ", Object.keys(err));
-        console.log("errors ", errors)
-        // TODO snackbar error
+        handleToastError()
     }
 
-    const onDelete = async (e) => {
-        e.preventDefault()
-        // TODO snackbar error or correct
+    const onDelete = async () => {
         const done = await deleteUserById(id);
         if (done) {
-            console.log("User deleted")
+            handleToastDone()
         }
     }
 
@@ -97,17 +88,14 @@ export default function UserForm({ id = null, defaultValues = {}, deleteFlag = f
                     <TextInput id={"firstName"} label={"First Name"} register={register} err={isErrorField("firstName")} />
                     <TextInput id={"lastName"} label={"Last Name"} register={register} err={isErrorField("lastName")} />
                     <TextInput id={"email"} label={"Email"} register={register} err={isErrorField("email")} />
-                    <TextInput id={"roleId"} label={"Role"} register={register} err={isErrorField("roleId")} />
+                    <TextInputSelect roles={roles} id={"roleId"} label={"Role"} register={register} err={isErrorField("roleId")} />
                     {isEdit ? (<div>
-                        <div className="flex flex-col items-start gap-2 self-stretch">
-                            <div className="self-stretch text-[#0e1823] text-sm font-medium leading-[120%]">Danger Zone</div>
-                            <div className="w-[21.4375rem] h-px bg-[#bccadc]/50" />
-                        </div>
+                        <FormTitle title={"Danger Zone"} />
                         <DeleteConfirm onDelete={onDelete} deleteFlag={deleteFlag} />
                     </div>) : null}
                 </>
-                <GoodToast show={actionDone} message={"Action done"} onClose={() => setActionDone(false)} />
-                <GoodToast show={actionError} message={"Action NOT done"} onClose={() => setActionError(false)} />
+                <Toast show={actionDone} message={"Action done"} ok={true} />
+                <Toast show={actionError} message={"Action NOT done"} ok={false} />
 
             </form>
         </>

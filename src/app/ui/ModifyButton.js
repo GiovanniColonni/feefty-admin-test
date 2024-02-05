@@ -1,6 +1,6 @@
 "use client"
 import { useRouter } from "next/navigation"
-import { modify } from "../icons"
+import { modify } from "./icons"
 
 export function ModifyButton({id}) {
     const router = useRouter()

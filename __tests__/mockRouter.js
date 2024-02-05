@@ -1,3 +1,5 @@
+/*
+does not work with next/navigation
 export function createMockRouter(router) {
   return {
     basePath: '',
@@ -24,4 +26,4 @@ export function createMockRouter(router) {
     isPreview: false,
     ...router,
   };
-}
+}*/

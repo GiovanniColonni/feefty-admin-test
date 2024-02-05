@@ -1,5 +1,9 @@
 import { z } from "zod";
 
+/**
+ * User model for the form using zod.
+ */
+
 const Status = z.enum(["active", "inactive"]);
 
 const Permission = z.enum(["create_user", "read_user", "update_user", "delete_user"]);

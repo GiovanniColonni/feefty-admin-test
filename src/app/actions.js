@@ -4,7 +4,10 @@ import { revalidatePath } from "next/cache";
 import PrismaAdapter from "@/lib/prisma/PrismaAdapter";
 import MongoAdapter from "@/lib/mongo/MongoAdapter";
 
-const adapter = PrismaAdapter
+/**
+ * HERE change the adapter to use Prisma or Mongo
+ */
+const adapter =  PrismaAdapter // MongoAdapter
 
 export async function getUsers() {
     const users = await adapter.getUsers()
@@ -22,7 +25,9 @@ export async function getUserById(id){
 }
 
 export async function updateUser(id,user){
-    return await adapter.updateUser(id,user)
+    const res = await adapter.updateUser(id,user)
+    revalidatePath("/")
+    return res
 }
 
 export async function deleteUserById(id){
@@ -35,4 +40,12 @@ export async function changeUserState(form){
     const id = form.get("id")
     const res = await adapter.changeUserState(id)
     revalidatePath("/")
+}
+
+export async function getRoles(){
+    return await adapter.getRoles()
+}
+
+export async function getAdapterName(){
+    return adapter.getAdapterName()
 }

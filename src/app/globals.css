@@ -33,3 +33,22 @@ body {
   background: rgb(var(--background-rgb));
   @apply font-sans;
 }
+
+select { 
+  appearance:none;
+}
+
+@keyframes toastAppear {
+  from {
+    opacity: 0;
+    transform: translate(-50%, -1rem);
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, 0);
+  }
+}
+
+.animate-toastAppear {
+  animation: toastAppear 0.5s ease-out forwards;
+}
