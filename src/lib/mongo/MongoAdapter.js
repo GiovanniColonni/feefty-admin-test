@@ -3,7 +3,7 @@ import cuid from "cuid"
 const url = 'mongodb://localhost:27017';
 const dbName = 'feefty';
 const client = new MongoClient(url);
-const collectionName = 'users'; // Assuming your collection is named 'users'
+const collectionName = 'users';
 
 // Since mongo uses ObjectID, we need to normalize the user object
 // because here we consider userId as the id
@@ -26,7 +26,6 @@ async function connectToMongoDB(collectionName = 'users') {
     return client.db(dbName).collection(collectionName);
 }
 
-// Function to get all users
 async function getUsers() {
     try {
         const collection = await connectToMongoDB();
@@ -38,7 +37,6 @@ async function getUsers() {
     }
 }
 
-// Function to add a new user
 async function addUser(user) {
     try {
         const collection = await connectToMongoDB();
@@ -51,7 +49,6 @@ async function addUser(user) {
     }
 }
 
-// Function to get a user by ID
 async function getUserById(userId) {
     try {
         const collection = await connectToMongoDB();
@@ -66,14 +63,13 @@ async function getUserById(userId) {
     }
 }
 
-// Function to update a user
 async function updateUser(userId, updatedUser) {
     try {
         const collection = await connectToMongoDB();
         const result = await collection.findOneAndUpdate(
             { userId: userId },
             { $set: updatedUser },
-            { returnDocument: 'after' } // MongoDB driver 4.x uses 'returnDocument' instead of 'returnOriginal'
+            { returnDocument: 'after' } // workaround to get the updated document
         );
         return true;
     } catch (error) {
@@ -81,7 +77,6 @@ async function updateUser(userId, updatedUser) {
     }
 }
 
-// Function to delete a user by ID
 async function deleteUserById(userId) {
 
     try {
@@ -94,7 +89,6 @@ async function deleteUserById(userId) {
     }
 }
 
-// Function to change user state
 async function changeUserState(userId) {
     try {
         const userState = (await getUserById(userId)).status;
@@ -117,7 +111,6 @@ async function getRoles() {
             return { value: String(role._id), label: role.label }
         })
 
-        console.log("rolemap", rolemap)
         return rolemap
     } catch (error) {
         throw new Error('Failed to get roles');

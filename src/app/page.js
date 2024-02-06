@@ -7,7 +7,6 @@ import EmptyList from './ui/EmpyList';
 import { body_div } from './ui/Boxes';
 
 
-
 export default async function Home() {
     const users = await getUsers();
 

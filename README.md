@@ -1,115 +1,89 @@
-# Feefty admin test
+# Feefty Admin Test
 
-[Github Repository](https://github.com/Feefty/feefty-admin-test)
+## Approach
 
-## Intro
+### Frontend
+Globally was very fun, Nextjs has some astonishing features and it took me a while to understand how it actually works and how to use SSR effectively.
+If it was just a React app I would have use just 1 page and handle everything in the frontend since the logic is straightforward.
+But given the fact that SSR are not only very powerful but also very useful to avoid writing extra code.
 
-Welcome to Feefty Admin Test!
+Given this I create 3 pages:
 
-The goal of this repo is to be a base to build on, in order to see how you approach web development on a stack similar to ours.
+1. *Home* (`PATH: "/"`) It's used for the list of the users to display. This page use SSR logic for fetching the user and the roles and also 
+thanks, to server actions, it was possible to handle the logic of the user state change (the switch button on the left). In fact thanks to the
 
-And hopefully, to make it worthwhile for you, we'll use recent tech so you can discover and try new things!
+    ```
+    <form action={actionName}>
+    </form>
+    ```
+    It's possible to handle the form from the server, taking full advantage of cache update and server-side action. (At the beginning figuring out that this was possible was a bit difficult).
 
-The test is simple, it focuses on creating a simple web app from scratch with a CRUD interface for a list of users.
+2. *Add User* (`PATH "/adduser"`) This page it's used to add a new user, in this case the form is a client component because it has logic that comes from the client. So the render of this page is mostly client side. But still it use a form tag has *Home* page and so the form is handled with a server action.
 
-Please fork this repo first and push it on your own github repo in public.
+3. *Update User* (`PATH "/updateuser/[id]"`) This page is used instead to modify the user, the path is used to store the state of the current user to fetch, since this information is avaible at build time NextJs will handle everything from the server and so this is also partialy SSR (not the form of course because depends on client inputs), the action is the same of Add User because the component is the same.
 
-Feefty is a design-driven company, we'll pay attention to the delivered interface and its closeness to the mockups.
+In order to improve the usability of the interface I opted to use `useForm` and `zod`, I feel this combo very powerful to create robust and usable interfaces that reduce user erros at the minimum. In this phase a big challenge for me was not only NextJs that in the end simplify most of the things you have to do (at least for server side communication) but also TailWind (that I now like a lot) was not so easy to undestand at the beginning and I feel that the actual code can be simplified. 
 
-To deliver the test please send us the link to your repo. You don't have to host it anywhere, we'll run it locally.
+> Note: I took the freedom to add at the end of the interface a div that show which adapter is used at the moment, it's not part of the design but its' just used to show how the backend works. 
 
-## Outcome
+### Backend
 
-The goal is to set up a simple CRUD interface for a list of users.
-The final app should include:
+In order to fit the Clean Architecture (or Orthogonal architecture) I use dependency injection in order to create 2 different Adapters (one for prisma and another for mongo). In the adapters there are all the details of the communication and interaction with the database, this is the part of the architecture that hide any implementation details of retriving the files. In fact in the example the functions related to mongodb are different from the one in prisma in which the data shape is different. 
+The common things about all the adapters are the functions that they expose, those are the one that realize the interface.
+The other part of the clean architecture is in the `action.js` file, here we have the same functions names of the adapters, this file is conceptually the **Port**. The **Port** is the part that separate the input and his shapes in the frontend from the particular way in which the input is store in the backend by refering to the particular Adapter and calling the function like this:
 
-- A global "Add user" button opens a new page with a form to add a user. The form uses the same design of the Edit form minus the Danger zone.
-- A list of users.
-- For each user, an "Edit" button that open a page to edit the user information. The form include a Delete button to delete the user. The deletion needs a user confirmation before deleting.
-- For each user, an "Activate / Deactivate" button to toggle the user status.
-
-Please respect the mockup [available here on Figma](https://www.figma.com/file/ivV7OQ4cpnh9W2DmaMWn2c/Test-UI?type=design&node-id=0%3A1&t=WRrllQCg4gX3ib4O-1)
-
-![Users Empty](docs/Users_empty.png)
-![Users](docs/Users.png)
-![Users Edit](docs/Users_edit.png)
-![Components](docs/Components.png)
-
-## Stack
-
-### Architecture
-
-We are aiming to adopt Hexagonal Architecture. Please use patterns from Hexagonal / [Clean Code](https://blog.cleancoder.com/uncle-bob/2012/08/13/the-clean-architecture.html) Architecture when appropriate.
-
-### Next.js
-
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app) using yarn.
-
-We'll use [Next.js 14 with the new App Router](https://nextjs.org/docs/app). It includes a new structure and a different approach to routing with Server Component and [Client component](https://nextjs.org/docs/getting-started/react-essentials#client-components).
-
-Use Server Component as much as possible, but use Client Component when there is interactivity / state management.
-
-Next.js 14 also includes Server Actions, allowing you to submit form directly from Server Components. Server Actions allows you to make calls to the server withtout having to code a api endpoint. Next manages the endpoint automatically.
-
-### Prisma / PostgreSQL
-
-We use PostgreSQL on all of our projects and use [Prisma](https://www.prisma.io/docs) as our ORM of choices.
-
-### Tailwind
-
-This project is set up to use [Tailwind](https://tailwindcss.com/). It is the recommended approach to work both on server and client components.
-
-### Others
-
-Feel free to use any other library you'd like to use.
-
-The following list are libraries we use in our different projects. This is only for information, you don't have to specifically use them:
-
-- [SWR](https://swr.vercel.app/) for data fetching if needed.
-- [React Hook Form](https://react-hook-form.com/) for form management.
-- [Radix UI](https://www.radix-ui.com/), [Headless UI](https://headlessui.com/), [Ant Design](https://ant.design/components/overview/) or [shadcn/ui](https://ui.shadcn.com/) for UI.
-- [heroicons](https://heroicons.com/) for icons
-- [React Hot Toast](https://react-hot-toast.com/) or [React Toastify](https://fkhadra.github.io/react-toastify/introduction) for Toasts
-- etc ...
-
-## Getting Started
-
-First, install dependencies :
-
-```bash
-yarn
-#or
-yarn install
+```javascript
+const adapter = PrismaAdapter 
+export async function getUsers() {
+    const users = await adapter.getUsers() // here the adapter is used (Dependency Injection)
+    return users || []
+}
 ```
 
-Create a database for your project, either locally or on a cloud provider.
+This is just a simple example to show how this architecture is used, other level of abstraction are possible in particular when there is a real business logic to implement (in this case it's just a CRUD interface).
 
-> **_⚠️_** On cloud provider, you will need to create a [shadow database](https://www.prisma.io/docs/concepts/components/prisma-migrate/shadow-database) manually
+#### Tests
 
-Create a `.env` file and setup your database connection :
+I make some tests in the single component but I was not able to mock `useRouter` of `next/navigation`. I tried in multiple ways (`next-router-mock` but was not working and, neither creating the mock manually) but in the end does not work, anyway i left an idea on how to test such a component. 
 
-```env
-DATABASE_URL="postgresql://johndoe:randompassword@localhost:5432/mydb?schema=public"
+### How to Run the example
+
+1. Run with Prisma Adapter:
+```
+# Run database (ex with docker)
+docker pull postgres
+
+docker run --name feefty-db -e POSTGRES_USER=user -e POSTGRES_DB=prova  -e POSTGRES_PASSWORD=prova -d -p 5432:5432 postgres
+```
+Reuse this credentials in the `.env` file
+
+```
+npm run dev
 ```
 
-Run the prisma migration to create the database schema :
+2. Run with Mongo Adapter
+```
+# Run database (ex with docker)
+docker pull mongodb
+docker run -d -p 27017:27017 --name mongodb mongo
 
-```bash
-yarn prisma migrate dev
+cd ./lib/mongo
+node seed.js
 ```
 
-Then, run the development server:
+Now change line 10 of the adapter to use Mongo Adapter, everything should work correctly.
 
-```bash
-yarn dev
-```
+### Output and result
+You can find a video demonstration of the application working.
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+![Homepage](./docs/listScreenshot.png)
 
-## Delivery
+![Add page](./docs/Add.png)
 
-To deliver the test please send us the link to your repo.
+![Edit Page](./docs/Delete.png)
 
-- You don’t have to host it anywhere, we’ll run it locally
-- Please document your approach along the way in the README
-- Please include relevant unit tests
+
+![Edit page with Delete banner](./docs/EditDelete.png)
+
+
+
